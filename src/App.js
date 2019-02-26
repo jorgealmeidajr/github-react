@@ -28,7 +28,6 @@ class App extends Component {
 
     return (
       <div className="App">
-        
         <Header as='h1' style={headerImageStyle}>
           <Image
             src='/img/github-logo.png'

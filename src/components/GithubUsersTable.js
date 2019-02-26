@@ -1,8 +1,17 @@
 
 import React from 'react'
-import { Table, Image, Header } from 'semantic-ui-react'
+import { Table, Image } from 'semantic-ui-react'
 
-const TableExampleCelledStriped = (props) => (
+
+const imageAvatarStyle = {
+  display: 'inline-block'
+}
+
+const spanLoginStyle = {
+  paddingLeft: '6px'
+}
+
+const GithubUsersTable = (props) => (
   <Table celled striped color='teal'>
     <Table.Header>
       <Table.Row>
@@ -17,16 +26,16 @@ const TableExampleCelledStriped = (props) => (
         <Table.Row key={user.id}>
           <Table.Cell>{user.id}</Table.Cell>
           <Table.Cell>
-            <Header as='h3'>
-              <Image circular src={user.avatar} size='small' /> {user.login}
-            </Header>
-            
+            <Image circular src={user.avatar} size='tiny' style={imageAvatarStyle} />
+            <span style={spanLoginStyle}>{user.login}</span>
           </Table.Cell>
-          <Table.Cell>{user.profile_url}</Table.Cell>
+          <Table.Cell>
+            <a href={user.profile_url}>{user.profile_url}</a>
+          </Table.Cell>
         </Table.Row>
       ))}
     </Table.Body>
   </Table>
 )
 
-export default TableExampleCelledStriped;
+export default GithubUsersTable;
