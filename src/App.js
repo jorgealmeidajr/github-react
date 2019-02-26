@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Image, Header } from 'semantic-ui-react';
+import { Image, Header, Button } from 'semantic-ui-react';
 
 import GithubUsersTable from './components/GithubUsersTable';
 
@@ -15,9 +15,17 @@ class App extends Component {
   };
 
   componentDidMount() {
+    // TODO: put this in state
     const currentPage = 0;
     
     GithubUsersAPI.findAllUsersSince(currentPage)
+      .then(response => this.setState({ users: response }) );
+  }
+
+  handleNextClick = () => {
+    // TODO: add previous button for pagination
+    // TODO: i have to use the last id user
+    GithubUsersAPI.findAllUsersSince(45)
       .then(response => this.setState({ users: response }) );
   }
 
@@ -37,6 +45,8 @@ class App extends Component {
           /> GitHub Users List
         </Header>
 
+        <Button onClick={this.handleNextClick} color='teal'>Next</Button>
+        
         <GithubUsersTable users={this.state.users} />
       </div>
     );
