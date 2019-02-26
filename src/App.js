@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { Image, Header } from 'semantic-ui-react';
+
 import GithubUsersTable from './components/GithubUsersTable';
 
 import GithubUsersAPI from './api/GithubUsersAPI';
@@ -16,15 +18,26 @@ class App extends Component {
     const currentPage = 0;
     
     GithubUsersAPI.findAllUsersSince(currentPage)
-      .then(response => { this.setState({ users: response }) });
+      .then(response => this.setState({ users: response }) );
   }
 
   render() {
+    const headerImageStyle = {
+      paddingTop: '20px'
+    };
+
     return (
       <div className="App">
-        <header className="App-header">
-          
-        </header>
+        
+        <Header as='h1' style={headerImageStyle}>
+          <Image
+            src='/img/github-logo.png'
+            href='https://github.com/'
+            circular
+            as='a' size='big' target='_blank'
+          /> GitHub Users List
+        </Header>
+
         <GithubUsersTable users={this.state.users} />
       </div>
     );
