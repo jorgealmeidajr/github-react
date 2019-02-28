@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Image, Header, Button } from 'semantic-ui-react';
+import { Image, Header, Button, Segment, Icon } from 'semantic-ui-react';
 
 import GithubUsersTable from './components/GithubUsersTable';
 
@@ -13,11 +13,13 @@ class App extends Component {
   state = {
     users: [],
     sinceId: 0,
+    error: null
   };
 
   componentDidMount() {    
     GithubUsersAPI.findAllUsersSince(this.state.sinceId)
-      .then(response => this.setState({ users: response }) );
+      .then(response => this.setState({ users: response }) )
+      .catch(error => this.setState({ error }) );
   }
 
   handleNextClick = () => {
@@ -25,7 +27,8 @@ class App extends Component {
 
     GithubUsersAPI.findAllUsersSince(nextSinceId)
       .then(response => this.setState({ users: response }) )
-      .then(() => this.changeNextSinceId());
+      .then(() => this.changeNextSinceId())
+      .catch(error => this.setState({ error }) );
   }
 
   changeNextSinceId = () => {
@@ -78,7 +81,19 @@ class App extends Component {
         
         <Button onClick={this.handleNextClick} color='teal' style={btnStyle}>Next</Button>
         
-        <GithubUsersTable users={this.state.users} />
+        {(this.state.error !== null) && (
+          <Segment placeholder inverted color='red' size='huge'>
+            <Header icon>
+              <Icon name='bug' />
+              {`${this.state.error}`}<br />
+              Problem while loading users from GitHub.
+            </Header>
+          </Segment>
+        )}
+
+        {(this.state.error === null) && (
+          <GithubUsersTable users={this.state.users} />
+        )}
       </div>
     );
   }
