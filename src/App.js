@@ -11,27 +11,53 @@ import './App.css';
 class App extends Component {
 
   state = {
-    users: []
+    users: [],
+    sinceId: 0,
   };
 
-  componentDidMount() {
-    // TODO: put this in state
-    const currentPage = 0;
-    
-    GithubUsersAPI.findAllUsersSince(currentPage)
+  componentDidMount() {    
+    GithubUsersAPI.findAllUsersSince(this.state.sinceId)
       .then(response => this.setState({ users: response }) );
   }
 
   handleNextClick = () => {
-    // TODO: add previous button for pagination
-    // TODO: i have to use the last id user
-    GithubUsersAPI.findAllUsersSince(45)
-      .then(response => this.setState({ users: response }) );
+    const nextSinceId = this.getNextSinceId()
+
+    GithubUsersAPI.findAllUsersSince(nextSinceId)
+      .then(response => this.setState({ users: response }) )
+      .then(() => this.changeNextSinceId());
+  }
+
+  changeNextSinceId = () => {
+    const nextSinceId = this.getNextSinceId()
+
+    this.setState({ sinceId: nextSinceId })
+  }
+
+  getNextSinceId() {
+    const { users } = this.state
+
+    if(users.length === 0) return 0;
+
+    const lastUser = users[users.length - 1]
+    return lastUser.id
+  }
+
+  isPreviousBtnDisabled = (sinceId) => {
+    return (sinceId === 0);
+  }
+
+  handlePreviousClick = () => {
+
   }
 
   render() {
     const headerImageStyle = {
       paddingTop: '20px'
+    };
+
+    const btnStyle = {
+      minWidth: '100px'
     };
 
     return (
@@ -45,7 +71,12 @@ class App extends Component {
           /> GitHub Users List
         </Header>
 
-        <Button onClick={this.handleNextClick} color='teal'>Next</Button>
+        <Button 
+          onClick={this.handlePreviousClick} 
+          color='red' style={btnStyle} 
+          disabled={this.isPreviousBtnDisabled(this.state.sinceId)}>Previous</Button>
+        
+        <Button onClick={this.handleNextClick} color='teal' style={btnStyle}>Next</Button>
         
         <GithubUsersTable users={this.state.users} />
       </div>
