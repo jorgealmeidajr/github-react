@@ -12,29 +12,28 @@ class App extends Component {
 
   state = {
     users: [],
-    sinceId: 0,
+    currentSinceId: 0,
     error: null
   };
 
   componentDidMount() {    
-    GithubUsersAPI.findAllUsersSince(this.state.sinceId)
+    this.sinceIdsStack = []
+
+    GithubUsersAPI.findAllUsersSince(this.state.currentSinceId)
       .then(response => this.setState({ users: response }) )
       .catch(error => this.setState({ error }) );
   }
 
   handleNextClick = () => {
     const nextSinceId = this.getNextSinceId()
+    const {currentSinceId}  = this.state
 
+    this.sinceIdsStack.push(currentSinceId)
+    
     GithubUsersAPI.findAllUsersSince(nextSinceId)
       .then(response => this.setState({ users: response }) )
-      .then(() => this.changeNextSinceId())
+      .then(() => this.setState({ currentSinceId: nextSinceId }))
       .catch(error => this.setState({ error }) );
-  }
-
-  changeNextSinceId = () => {
-    const nextSinceId = this.getNextSinceId()
-
-    this.setState({ sinceId: nextSinceId })
   }
 
   getNextSinceId() {
@@ -46,12 +45,20 @@ class App extends Component {
     return lastUser.id
   }
 
-  isPreviousBtnDisabled = (sinceId) => {
-    return (sinceId === 0);
+  isPreviousBtnDisabled = () => {
+    return (this.state.currentSinceId === 0);
   }
 
   handlePreviousClick = () => {
-
+    let currentSinceId = 0;
+    if (this.sinceIdsStack.length !== 0) {
+      currentSinceId = this.sinceIdsStack.pop()  
+    }
+    
+    GithubUsersAPI.findAllUsersSince(currentSinceId)
+      .then(response => this.setState({ users: response }) )
+      .then(() => this.setState({ currentSinceId }))
+      .catch(error => this.setState({ error }) );
   }
 
   render() {
@@ -77,7 +84,7 @@ class App extends Component {
         <Button 
           onClick={this.handlePreviousClick} 
           color='red' style={btnStyle} 
-          disabled={this.isPreviousBtnDisabled(this.state.sinceId)}>Previous</Button>
+          disabled={this.isPreviousBtnDisabled()}>Previous</Button>
         
         <Button onClick={this.handleNextClick} color='teal' style={btnStyle}>Next</Button>
         
