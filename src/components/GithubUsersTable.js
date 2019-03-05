@@ -1,5 +1,6 @@
 
 import React from 'react'
+import { Link } from "react-router-dom"
 import { Table, Image } from 'semantic-ui-react'
 
 
@@ -25,10 +26,14 @@ const GithubUsersTable = (props) => (
       {props.users.map(user => (
         <Table.Row key={user.id}>
           <Table.Cell>{user.id}</Table.Cell>
+
           <Table.Cell>
-            <Image circular src={user.avatar} size='tiny' style={imageAvatarStyle} />
-            <span style={spanLoginStyle}>{user.login}</span>
+            <Link to={`/user-details/${user.login}`}>
+              <Image circular src={user.avatar} size='tiny' style={imageAvatarStyle} />
+            </Link>
+            <span style={spanLoginStyle}>{user.login}</span><br />
           </Table.Cell>
+          
           <Table.Cell>
             <a href={user.profile_url}>{user.profile_url}</a>
           </Table.Cell>
