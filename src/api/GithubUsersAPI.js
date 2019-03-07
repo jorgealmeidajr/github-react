@@ -12,6 +12,10 @@ export default class GithubUsersAPI {
 		return axios.get(`http://localhost:4000/api/users/${username}/details`)
 			.then((response) => response.data)
 	}
-	
+
+	static findUserRepositories(username) {
+		return axios.get(`http://localhost:4000/api/users/${username}/repos`)
+			.then((response) => response.data)
+	}
 
 }

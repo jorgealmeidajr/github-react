@@ -1,7 +1,7 @@
 
 import React, { Component, Fragment } from 'react';
 
-import { Card, Placeholder, Image, Button, Container, Header } from 'semantic-ui-react';
+import { Card, Placeholder, Image, Button, Container, Header, Modal, List, Segment, Icon } from 'semantic-ui-react';
 
 import GithubUsersAPI from '../api/GithubUsersAPI';
 
@@ -23,9 +23,23 @@ class UserDetailsScreen extends Component {
 			.then(response => this.setState({ user: response, loading: false }) )
 			.catch(error => this.setState({ error }) );
 	}
+
+	handleOpenReposModal = () => {
+		const username = this.props.match.params.username;
+
+		GithubUsersAPI.findUserRepositories(username)
+			.then(response => this.setState({ 
+				repositories: response, 
+				repositoriesModalVisible: !this.state.repositoriesModalVisible 
+			}) );
+	}
+
+	handleCloseReposModal = () => {
+		this.setState({ repositoriesModalVisible: !this.state.repositoriesModalVisible });
+	}
 	
 	render() {
-		const {user, loading, error} = this.state;
+		const {user, loading, error, repositories, repositoriesModalVisible} = this.state;
 
 		const containerStyle = {
 			marginTop: '10px',
@@ -78,9 +92,43 @@ class UserDetailsScreen extends Component {
 
 						<Card.Content extra>
 							<Button disabled={loading} primary style={btnCardStyle}>Repos >></Button>
-							<Button disabled={loading} primary style={btnCardStyle}>Repos !</Button>
+							<Button disabled={loading} primary style={btnCardStyle} onClick={this.handleOpenReposModal}>Repos !</Button>
 						</Card.Content>
 					</Card>
+				)}
+
+				{(error !== null) && (
+          <Segment placeholder inverted color='red' size='huge'>
+            <Header icon>
+              <Icon name='bug' />
+              {`${error}`}<br />
+              Problem while loading user details from GitHub.
+            </Header>
+          </Segment>
+        )}
+
+				{(user !== null) && (
+				<Modal open={repositoriesModalVisible} size='large' onClose={this.handleCloseReposModal}>
+					<Modal.Header>User Repositories List</Modal.Header>
+					<Modal.Content>
+						<Modal.Description>
+							<Header>Login: {user.login}</Header>
+							
+							<List divided relaxed>
+							{repositories.map(repo => (
+								<List.Item key={repo.id}>
+									<List.Icon name='github' size='large' verticalAlign='middle' />
+									<List.Content>
+										<List.Header as='a'>{repo.html_url}</List.Header>
+										<List.Description as='a'>{repo.name}</List.Description>
+									</List.Content>
+								</List.Item>
+							))}
+								
+							</List>
+						</Modal.Description>
+					</Modal.Content>
+				</Modal>
 				)}
 			</Container>
 		)
