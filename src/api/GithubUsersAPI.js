@@ -9,8 +9,9 @@ export default class GithubUsersAPI {
 	}
 
 	static findUserDetails(username) {
-		return axios.get(`http://localhost:4000/api/${username}/details`)
+		return axios.get(`http://localhost:4000/api/users/${username}/details`)
 			.then((response) => response.data)
 	}
+	
 
 }
