@@ -37,6 +37,12 @@ class UserDetailsScreen extends Component {
 	handleCloseReposModal = () => {
 		this.setState({ repositoriesModalVisible: !this.state.repositoriesModalVisible });
 	}
+
+	formatDateLoginCreation = (date) => {
+		const re = /^(?<year>\d{4})-(?<month>\d{2})-(?<date>\d{2})/;
+		let groups = date.match(re).groups;
+		return `${groups.date}/${groups.month}/${groups.year}`;
+	}
 	
 	render() {
 		const {user, loading, error, repositories, repositoriesModalVisible} = this.state;
@@ -84,7 +90,7 @@ class UserDetailsScreen extends Component {
 							) : (
 								<Fragment>
 									<Card.Header>{user.login}</Card.Header>
-									<Card.Meta>{user.date_login_creation}</Card.Meta>
+									<Card.Meta>Date of login creation: {this.formatDateLoginCreation(user.date_login_creation)}</Card.Meta>
 									<Card.Description>{user.profile_url}</Card.Description>
 								</Fragment>
 							)}
@@ -108,9 +114,9 @@ class UserDetailsScreen extends Component {
         )}
 
 				{(user !== null) && (
-				<Modal open={repositoriesModalVisible} size='large' onClose={this.handleCloseReposModal}>
+				<Modal open={repositoriesModalVisible} size='large' onClose={this.handleCloseReposModal} closeIcon>
 					<Modal.Header>User Repositories List</Modal.Header>
-					<Modal.Content>
+					<Modal.Content scrolling>
 						<Modal.Description>
 							<Header>Login: {user.login}</Header>
 							
