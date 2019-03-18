@@ -90,7 +90,7 @@ class UserDetailsScreen extends Component {
 							) : (
 								<Fragment>
 									<Card.Header>{user.login}</Card.Header>
-									<Card.Meta>Date of login creation: {this.formatDateLoginCreation(user.date_login_creation)}</Card.Meta>
+									<Card.Meta>Login creation date: {this.formatDateLoginCreation(user.date_login_creation)}</Card.Meta>
 									<Card.Description>{user.profile_url}</Card.Description>
 								</Fragment>
 							)}
